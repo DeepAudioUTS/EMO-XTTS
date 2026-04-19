@@ -422,21 +422,3 @@ Request:
 Response: Binary `audio/wav` — save with `--output story.wav`.
 
 ---
-
-## Model Performance
-
-Evaluated on the GoEmotions test set (4,401 samples):
-
-| Emotion | Precision | Recall | F1 | Support |
-|---------|-----------|--------|----|---------|
-| Happy | 0.82 | 0.79 | 0.80 | 818 |
-| Loving/Tender | 0.74 | 0.78 | 0.76 | 752 |
-| Neutral | 0.73 | 0.71 | 0.72 | 1702 |
-| Tense/Fearful | 0.59 | 0.75 | 0.66 | 64 |
-| Sad | 0.60 | 0.66 | 0.63 | 255 |
-| Angry | 0.56 | 0.55 | 0.56 | 566 |
-| Disgusted | 0.63 | 0.43 | 0.51 | 69 |
-| Surprised | 0.44 | 0.50 | 0.47 | 175 |
-| **Overall Accuracy** | | | **70.1%** | 4401 |
-
-Weaker classes (Disgusted, Surprised, Tense/Fearful) have fewer training samples due to class imbalance in the GoEmotions dataset.
