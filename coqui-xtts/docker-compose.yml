@@ -1,0 +1,77 @@
+services:
+
+  classifier:
+    build:
+      context: /home/bhargav/emotion_classifier
+      dockerfile: Dockerfile
+    container_name: classifier-api
+    ports:
+      - "8001:8001"
+    volumes:
+      - /home/bhargav/emotion_classifier/emotion_model:/app/emotion_model
+    networks:
+      - deep-audio-network
+    environment:
+      - PYTHONUNBUFFERED=1
+    restart: unless-stopped
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+
+  xtts:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: xtts-api
+    ports:
+      - "8000:8000"
+    volumes:
+      - tts-cache:/root/.local/share/tts
+      - ./output:/app/output
+      - ./EmotionAudio:/app/EmotionAudio
+    networks:
+      - deep-audio-network
+    environment:
+      - PYTHONUNBUFFERED=1
+    restart: unless-stopped
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+
+  pipeline:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: pipeline-api
+    ports:
+      - "8002:8002"
+    volumes:
+      - ./output:/app/output
+    networks:
+      - deep-audio-network
+    environment:
+      - PYTHONUNBUFFERED=1
+      - CLASSIFIER_URL=http://classifier:8001
+      - XTTS_URL=http://xtts:8000
+      - EMOTION_WAV_BASE=/app/EmotionAudio
+    depends_on:
+      - classifier
+      - xtts
+    restart: unless-stopped
+    command: ["uvicorn", "pipeline_api:app", "--host", "0.0.0.0", "--port", "8002"]
+
+volumes:
+  tts-cache:
+
+networks:
+  deep-audio-network:
+    external: true
+    name: deep-audio-network

@@ -1,0 +1,16 @@
+transformers
+datasets
+torch
+torchvision
+torchaudio
+scikit-learn
+spacy
+gradio
+matplotlib
+seaborn
+numpy
+pandas
+regex
+
+# After pip install, also run:
+#   python -m spacy download en_core_web_sm
